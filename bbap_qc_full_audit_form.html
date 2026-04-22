@@ -1,0 +1,537 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#185FA5;--blue-lt:#E6F1FB;--blue-dk:#0C447C;--green:#3B6D11;--green-lt:#EAF3DE;--amber:#854F0B;--amber-lt:#FAEEDA;--red:#A32D2D;--red-lt:#FCEBEB}
+.app{padding:1rem;font-family:var(--font-sans);max-width:440px}
+h2{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:.875rem}
+.card-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+.field{margin-bottom:.875rem}
+.field:last-child{margin-bottom:0}
+label.lbl{font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:5px}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;padding:8px 10px;font-size:14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);outline:none;font-family:var(--font-sans)}
+input:focus,select:focus,textarea:focus{border-color:var(--color-border-primary);box-shadow:0 0 0 2px rgba(0,0,0,.06)}
+textarea{resize:vertical;min-height:64px}
+.radio-group,.check-group{display:flex;flex-direction:column;gap:6px}
+.radio-opt,.check-opt{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--color-text-primary);cursor:pointer;padding:6px 8px;border-radius:var(--border-radius-md);border:0.5px solid transparent}
+.radio-opt:hover,.check-opt:hover{background:var(--color-background-secondary)}
+.radio-opt.sel,.check-opt.sel{background:var(--blue-lt);border-color:#B5D4F4;color:var(--blue-dk)}
+.radio-dot{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--color-border-secondary);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.radio-opt.sel .radio-dot{border-color:var(--blue);background:var(--blue)}
+.radio-dot-inner{width:6px;height:6px;border-radius:50%;background:#fff}
+.check-box{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--color-border-secondary);flex-shrink:0}
+.stars{display:flex;gap:4px}
+.star{font-size:22px;cursor:pointer;color:var(--color-border-secondary);line-height:1;user-select:none}
+.star.on{color:#EF9F27}
+.meas-block{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem;margin-bottom:.625rem}
+.meas-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:.5rem}
+.meas-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.375rem}
+.meas-lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.avg-display{font-size:14px;font-weight:500;padding:8px 10px;background:var(--color-background-primary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);min-height:36px;display:flex;align-items:center}
+.readings-row{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:.375rem}
+.r-pill{font-size:12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:12px;padding:2px 8px;color:var(--color-text-primary);cursor:pointer}
+.add-btn{font-size:12px;background:none;border:0.5px dashed var(--color-border-secondary);border-radius:12px;padding:2px 10px;color:var(--color-text-secondary);cursor:pointer}
+.delta-row{display:flex;justify-content:space-between;align-items:center;margin-top:.375rem;padding-top:.375rem;border-top:0.5px solid var(--color-border-tertiary)}
+.delta-lbl{font-size:11px;color:var(--color-text-secondary)}
+.badge{font-size:11px;padding:2px 8px;border-radius:10px}
+.badge.ok{background:var(--green-lt);color:var(--green)}
+.badge.warn{background:var(--amber-lt);color:var(--amber)}
+.badge.bad{background:var(--red-lt);color:var(--red)}
+.section-sep{height:1px;background:var(--color-border-tertiary);margin:.25rem 0 .875rem}
+.btn-row{display:flex;gap:8px;margin-top:1rem}
+.btn-primary{flex:1;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:var(--border-radius-md);font-size:15px;font-weight:500;cursor:pointer}
+.btn-primary:hover{background:var(--blue-dk)}
+.btn-primary:disabled{background:var(--color-border-secondary);cursor:not-allowed}
+.btn-secondary{padding:12px 20px;background:none;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:14px;color:var(--color-text-primary);cursor:pointer}
+.status{font-size:13px;text-align:center;margin-top:.75rem;min-height:18px}
+.status.ok{color:var(--green)}.status.err{color:var(--red)}
+.progress{height:3px;background:var(--color-border-tertiary);border-radius:2px;margin-bottom:1.25rem}
+.progress-fill{height:3px;background:var(--blue);border-radius:2px;transition:width .3s}
+.hidden{display:none}
+.hint{font-size:11px;color:var(--color-text-secondary);margin-top:3px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:200}
+.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:1.25rem;width:260px;border:0.5px solid var(--color-border-secondary)}
+.modal h3{font-size:15px;font-weight:500;margin-bottom:.75rem;color:var(--color-text-primary)}
+.modal-btns{display:flex;gap:8px;margin-top:.75rem}
+.modal-btns button{flex:1;padding:9px;border-radius:var(--border-radius-md);font-size:14px;cursor:pointer}
+.m-cancel{background:none;border:0.5px solid var(--color-border-secondary);color:var(--color-text-primary)}
+.m-ok{background:var(--blue);border:none;color:#fff}
+</style>
+
+<div class="app">
+<div class="progress"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+
+<div id="pageGeneral">
+<h2>QC Audit</h2>
+<p class="sub">B&B Albany Pallet Co.</p>
+<div class="card">
+<div class="card-title">General information</div>
+<div class="field"><label class="lbl">Auditor name *</label><input type="text" id="g_name" placeholder="Your name"></div>
+<div class="field"><label class="lbl">Date *</label><input type="date" id="g_date"></div>
+<div class="field"><label class="lbl">Role *</label>
+<div class="radio-group" id="rg_role">
+<div class="radio-opt" onclick="pick('rg_role',this,'Production')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Production</div>
+<div class="radio-opt" onclick="pick('rg_role',this,'Shipping')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Shipping</div>
+</div></div>
+<div class="field"><label class="lbl">Location of audit *</label>
+<select id="g_loc"><option value="">Select location</option><option>Turbo</option><option>Duo 1</option><option>Duo 2</option><option>Champion</option><option>Handwork</option><option>Shipping</option><option>Saw Mill</option><option>At Customer Site</option><option>Other</option></select></div>
+<div class="field"><label class="lbl">Type of product audited *</label>
+<div class="radio-group" id="rg_type">
+<div class="radio-opt" onclick="pick('rg_type',this,'Pallets')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Pallets</div>
+<div class="radio-opt" onclick="pick('rg_type',this,'Lumber')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Lumber</div>
+</div></div>
+</div>
+<div class="btn-row"><button class="btn-primary" onclick="nextFromGeneral()">Next</button></div>
+</div>
+
+<div id="pagePallet" class="hidden">
+<h2>Pallet QC</h2><p class="sub" id="palletSub"></p>
+
+<div class="card">
+<div class="card-title">Job info</div>
+<div class="field"><label class="lbl">Customer name *</label><input type="text" id="p_customer" placeholder="e.g. Washington Mills"></div>
+<div class="field"><label class="lbl">Pallet SKU *</label><input type="text" id="p_sku" placeholder="e.g. GMA-48x40"></div>
+<div class="field"><label class="lbl">Pallet or Skid? *</label>
+<div class="radio-group" id="rg_pallettype">
+<div class="radio-opt" onclick="pick('rg_pallettype',this,'Pallet');toggleSkid()"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Pallet</div>
+<div class="radio-opt" onclick="pick('rg_pallettype',this,'Skid');toggleSkid()"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Skid</div>
+</div></div>
+<div class="field"><label class="lbl">Block pallet? *</label>
+<div class="radio-group" id="rg_block">
+<div class="radio-opt" onclick="pick('rg_block',this,'Yes');toggleBlocks()"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes</div>
+<div class="radio-opt" onclick="pick('rg_block',this,'No');toggleBlocks()"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No</div>
+</div></div>
+</div>
+
+<div class="card">
+<div class="card-title">Stringers</div>
+<div id="measStringers"></div>
+<div class="field" style="margin-top:.5rem"><label class="lbl">Stringer appearance & spacing (1–5 stars)</label><div class="stars" id="stars_stringer_app"></div></div>
+<div class="field"><label class="lbl">Are stringers notched? *</label>
+<div class="radio-group" id="rg_notched">
+<div class="radio-opt" onclick="pick('rg_notched',this,'Yes');toggleNotch()"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes</div>
+<div class="radio-opt" onclick="pick('rg_notched',this,'No');toggleNotch()"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No</div>
+</div></div>
+<div id="notchSection" class="hidden" style="margin-top:.5rem">
+<div class="section-sep"></div>
+<div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:.5rem">Standard: Depth 1.5" · Length 9" · Location 6" from end</div>
+<div id="measNotch"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">Top deck boards</div>
+<div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:.5rem">Lead boards</div>
+<div id="measTopLead"></div>
+<div class="section-sep"></div>
+<div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:.5rem">Interior boards</div>
+<div id="measTopInt"></div>
+<div class="field" style="margin-top:.5rem"><label class="lbl">Top deck appearance & spacing (1–5 stars)</label><div class="stars" id="stars_topdeck_app"></div></div>
+</div>
+
+<div id="bottomDeckCard" class="card">
+<div class="card-title">Bottom deck boards</div>
+<div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:.5rem">Lead boards</div>
+<div id="measBotLead"></div>
+<div class="section-sep"></div>
+<div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:.5rem">Interior boards</div>
+<div id="measBotInt"></div>
+<div class="field" style="margin-top:.5rem"><label class="lbl">Bottom deck appearance & spacing (1–5 stars)</label><div class="stars" id="stars_botdeck_app"></div></div>
+<div class="field"><label class="lbl">Deckboard sequence</label><input type="text" id="p_sequence" placeholder="e.g. 3-2-3 or describe pattern"></div>
+</div>
+
+<div id="blocksCard" class="card hidden">
+<div class="card-title">Blocks</div>
+<div id="measBlocks"></div>
+</div>
+
+<div class="card">
+<div class="card-title">Pallet overall</div>
+<div class="field">
+<label class="lbl">Pallet square — spec (in)</label>
+<div class="meas-row"><div><div class="meas-lbl">Spec (in)</div><input type="number" step="0.0625" inputmode="decimal" id="square_spec" placeholder="e.g. 48" onchange="refreshSquare()"></div><div><div class="meas-lbl">Avg measured</div><div class="avg-display" id="square_avg">—</div></div></div>
+<div class="readings-row" id="square_pills"><button class="add-btn" onclick="openModal('square','square','Square')">+ Add reading</button></div>
+<div id="square_delta" class="delta-row hidden"><span class="delta-lbl">Delta</span><span id="square_badge"></span></div>
+</div>
+<div class="field"><label class="lbl">Is the pallet HT? *</label>
+<div class="radio-group" id="rg_ht">
+<div class="radio-opt" onclick="pick('rg_ht',this,'Yes')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes</div>
+<div class="radio-opt" onclick="pick('rg_ht',this,'No')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No</div>
+</div></div>
+<div class="field"><label class="lbl">Are all brand marks legible? *</label>
+<div class="radio-group" id="rg_brands">
+<div class="radio-opt" onclick="pick('rg_brands',this,'Yes – all look good')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes – all look good</div>
+<div class="radio-opt" onclick="pick('rg_brands',this,'Most good, a couple need improvement')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Most good, a couple need improvement</div>
+<div class="radio-opt" onclick="pick('rg_brands',this,'Many missing or unreadable')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Many missing or unreadable</div>
+</div></div>
+<div class="field"><label class="lbl">Bark level *</label>
+<div class="radio-group" id="rg_bark">
+<div class="radio-opt" onclick="pick('rg_bark',this,'No bark')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No bark</div>
+<div class="radio-opt" onclick="pick('rg_bark',this,'Some bark, within spec')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Some bark, within spec</div>
+<div class="radio-opt" onclick="pick('rg_bark',this,'Lots of bark, spec borderline')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Lots of bark, spec borderline</div>
+<div class="radio-opt" onclick="pick('rg_bark',this,'Out of regulation')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Out of regulation</div>
+</div></div>
+<div class="field"><label class="lbl">Average countersink (1–5★, perfect = 1/16")</label><div class="stars" id="stars_countersink"></div></div>
+<div class="field"><label class="lbl">Does pallet require brand other than HT? *</label>
+<div class="radio-group" id="rg_otherbrand">
+<div class="radio-opt" onclick="pick('rg_otherbrand',this,'Yes');toggleBrandSection()"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes</div>
+<div class="radio-opt" onclick="pick('rg_otherbrand',this,'No');toggleBrandSection()"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No</div>
+</div></div>
+<div id="brandSection" class="hidden">
+<div class="field"><label class="lbl">Brand correct and legible?</label>
+<div class="radio-group" id="rg_brandok">
+<div class="radio-opt" onclick="pick('rg_brandok',this,'Yes – correct and legible')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes – correct and legible</div>
+<div class="radio-opt" onclick="pick('rg_brandok',this,'Correct but almost unreadable')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Correct but almost unreadable</div>
+<div class="radio-opt" onclick="pick('rg_brandok',this,'Incorrect but looks great')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Incorrect but looks great</div>
+<div class="radio-opt" onclick="pick('rg_brandok',this,'No brand')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No brand</div>
+</div></div>
+<div class="field"><label class="lbl">Brand placement (1–5 stars)</label><div class="stars" id="stars_brandplacement"></div></div>
+</div>
+<div class="field"><label class="lbl">Is pallet painted? *</label>
+<div class="radio-group" id="rg_painted">
+<div class="radio-opt" onclick="pick('rg_painted',this,'Yes');togglePaint()"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes</div>
+<div class="radio-opt" onclick="pick('rg_painted',this,'No');togglePaint()"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No</div>
+</div></div>
+<div id="paintSection" class="hidden"><div class="field"><label class="lbl">Paint rating (color, location, etc.)</label><input type="text" id="p_paint" placeholder="e.g. Blue, center stringer, looks good"></div></div>
+<div class="field"><label class="lbl">Correct stack height? *</label>
+<div class="radio-group" id="rg_stack">
+<div class="radio-opt" onclick="pick('rg_stack',this,'Yes')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes</div>
+<div class="radio-opt" onclick="pick('rg_stack',this,'No')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No</div>
+</div></div>
+<div class="field"><label class="lbl">Deckboard & stringer wane rating (1–5★)</label><div class="stars" id="stars_wane"></div><div class="hint">5★ = correct levels and orientation</div></div>
+<div class="field"><label class="lbl">Food grade SKU? *</label>
+<div class="radio-group" id="rg_foodgrade">
+<div class="radio-opt" onclick="pick('rg_foodgrade',this,'Yes')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes</div>
+<div class="radio-opt" onclick="pick('rg_foodgrade',this,'No')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No</div>
+<div class="radio-opt" onclick="pick('rg_foodgrade',this,'Unsure')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Unsure</div>
+</div></div>
+<div class="field"><label class="lbl">Free of sawdust? *</label>
+<div class="radio-group" id="rg_sawdust">
+<div class="radio-opt" onclick="pick('rg_sawdust',this,'Yes')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes</div>
+<div class="radio-opt" onclick="pick('rg_sawdust',this,'No')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No</div>
+</div></div>
+<div class="field"><label class="lbl">Mold, dust, snow, water & dirt acceptable? *</label>
+<div class="radio-group" id="rg_contam">
+<div class="radio-opt" onclick="pick('rg_contam',this,'Yes')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes</div>
+<div class="radio-opt" onclick="pick('rg_contam',this,'Maybe')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Maybe</div>
+<div class="radio-opt" onclick="pick('rg_contam',this,'No')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No</div>
+</div></div>
+<div id="shippingFields" class="hidden">
+<div class="field"><label class="lbl">Pallets KD (kiln dried)? *</label>
+<div class="radio-group" id="rg_kd">
+<div class="radio-opt" onclick="pick('rg_kd',this,'Yes')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Yes</div>
+<div class="radio-opt" onclick="pick('rg_kd',this,'No')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>No</div>
+<div class="radio-opt" onclick="pick('rg_kd',this,'Unsure')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Unsure</div>
+</div></div>
+<div class="field"><label class="lbl">Average moisture level (%)</label><input type="number" step="0.1" inputmode="decimal" id="p_moisture" placeholder="e.g. 19.5"></div>
+</div>
+<div class="field"><label class="lbl">Pallet banding *</label>
+<div class="radio-group" id="rg_banding">
+<div class="radio-opt" onclick="pick('rg_banding',this,'Pallets are banded')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Pallets are banded</div>
+<div class="radio-opt" onclick="pick('rg_banding',this,'Missing banding')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Missing banding</div>
+<div class="radio-opt" onclick="pick('rg_banding',this,'Not required')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Not required</div>
+</div></div>
+<div class="field"><label class="lbl">General notes</label><textarea id="p_notes" placeholder="Any additional observations..."></textarea></div>
+</div>
+
+<div class="btn-row">
+<button class="btn-secondary" onclick="goBack()">Back</button>
+<button class="btn-primary" onclick="submitAudit()">Submit Audit</button>
+</div>
+<div class="status" id="statusBar"></div>
+</div>
+
+<div id="pageLumber" class="hidden">
+<h2>Lumber QC</h2><p class="sub" id="lumberSub"></p>
+<div class="card">
+<div class="card-title">Job info</div>
+<div class="field"><label class="lbl">Pack size</label><input type="text" id="l_packsize" placeholder="e.g. 4x8x16, 96 pcs"></div>
+<div class="field"><label class="lbl">Lumber grade</label>
+<select id="l_grade"><option value="">Select grade</option><option>#1</option><option>#2</option><option>#3</option><option>Economy</option><option>Pallet/Crating</option><option>Other</option></select></div>
+</div>
+<div class="card">
+<div class="card-title">Dimensions (spec + readings)</div>
+<div id="measLumber"></div>
+</div>
+<div class="card">
+<div class="card-title">Quality</div>
+<div class="field"><label class="lbl">Sawdust level</label>
+<div class="radio-group" id="rg_l_sawdust">
+<div class="radio-opt" onclick="pick('rg_l_sawdust',this,'None')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>None</div>
+<div class="radio-opt" onclick="pick('rg_l_sawdust',this,'Almost none')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Almost none</div>
+<div class="radio-opt" onclick="pick('rg_l_sawdust',this,'Average')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Average</div>
+<div class="radio-opt" onclick="pick('rg_l_sawdust',this,'High')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>High</div>
+<div class="radio-opt" onclick="pick('rg_l_sawdust',this,'Extremely high')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Extremely high</div>
+</div></div>
+<div class="field"><label class="lbl">Mold level</label>
+<div class="radio-group" id="rg_l_mold">
+<div class="radio-opt" onclick="pick('rg_l_mold',this,'None')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>None</div>
+<div class="radio-opt" onclick="pick('rg_l_mold',this,'Almost none')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Almost none</div>
+<div class="radio-opt" onclick="pick('rg_l_mold',this,'Average')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Average</div>
+<div class="radio-opt" onclick="pick('rg_l_mold',this,'High')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>High</div>
+<div class="radio-opt" onclick="pick('rg_l_mold',this,'Extremely high')"><div class="radio-dot"><div class="radio-dot-inner"></div></div>Extremely high</div>
+</div></div>
+<div class="field"><label class="lbl">General notes</label><textarea id="l_notes" placeholder="Any additional observations..."></textarea></div>
+</div>
+<div class="btn-row">
+<button class="btn-secondary" onclick="goBack()">Back</button>
+<button class="btn-primary" onclick="submitAudit()">Submit Audit</button>
+</div>
+<div class="status" id="statusBar2"></div>
+</div>
+
+<div id="modalArea"></div>
+</div>
+
+<script>
+const S={};
+let role='',productType='',activeModal=null;
+
+function pick(groupId,el,val){
+  document.querySelectorAll('#'+groupId+' .radio-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  S[groupId]=val;
+}
+
+function makeStar(containerId){
+  const c=document.getElementById(containerId);
+  if(!c)return;
+  c.innerHTML='';S[containerId]=0;
+  for(let i=1;i<=5;i++){
+    const s=document.createElement('span');
+    s.className='star';s.textContent='★';s.dataset.v=i;
+    s.onclick=()=>{S[containerId]=i;c.querySelectorAll('.star').forEach(x=>x.classList.toggle('on',+x.dataset.v<=i));};
+    c.appendChild(s);
+  }
+}
+
+function buildMeas(containerId,dims,prefix){
+  const c=document.getElementById(containerId);if(!c)return;c.innerHTML='';
+  dims.forEach(dim=>{
+    const key=prefix+'_'+dim;
+    S[key]={spec:'',readings:[]};
+    c.innerHTML+=`<div class="meas-block">
+      <div class="meas-name">${dim}</div>
+      <div class="meas-row">
+        <div><div class="meas-lbl">Spec (in)</div><input type="number" step="0.0625" inputmode="decimal" placeholder="e.g. 1.5" onchange="setSpec('${key}',this.value)"></div>
+        <div><div class="meas-lbl">Avg measured</div><div class="avg-display" id="avg_${key}">—</div></div>
+      </div>
+      <div class="readings-row" id="pills_${key}"><button class="add-btn" onclick="openModal('${key}','${dim}','${dim}')">+ Add reading</button></div>
+      <div class="delta-row hidden" id="drow_${key}"><span class="delta-lbl">Delta from spec</span><span id="dbadge_${key}"></span></div>
+    </div>`;
+  });
+}
+
+function setSpec(key,val){S[key].spec=parseFloat(val)||'';refreshMeas(key);}
+
+function refreshMeas(key){
+  const d=S[key];if(!d)return;
+  const n=d.readings.length;
+  const avgEl=document.getElementById('avg_'+key);
+  const drowEl=document.getElementById('drow_'+key);
+  const badgeEl=document.getElementById('dbadge_'+key);
+  const pillsEl=document.getElementById('pills_'+key);
+  if(!avgEl)return;
+  const addBtn=`<button class="add-btn" onclick="openModal('${key}','','')">+ Add reading</button>`;
+  pillsEl.innerHTML=d.readings.map((r,i)=>`<span class="r-pill" onclick="removeR('${key}',${i})" title="tap to remove">${r.toFixed(3)}"</span>`).join('')+addBtn;
+  if(n===0){avgEl.textContent='—';avgEl.style.color='var(--color-text-secondary)';drowEl.classList.add('hidden');return;}
+  const avg=d.readings.reduce((a,b)=>a+b,0)/n;
+  avgEl.textContent=avg.toFixed(3)+'" (n='+n+')';avgEl.style.color='var(--color-text-primary)';
+  if(d.spec!==''){
+    const delta=avg-d.spec;const abs=Math.abs(delta);
+    const cls=abs<=0.03125?'ok':abs<=0.0625?'warn':'bad';
+    badgeEl.innerHTML=`<span class="badge ${cls}">${delta>0?'+':''}${delta.toFixed(4)}"</span>`;
+    drowEl.classList.remove('hidden');
+  } else drowEl.classList.add('hidden');
+}
+
+function removeR(key,idx){S[key].readings.splice(idx,1);refreshMeas(key);}
+
+function openModal(key,dim,label){
+  activeModal={key,dim,label};
+  document.getElementById('modalArea').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal"><h3>Add reading${label?' — '+label:''}</h3><label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:5px">Measurement (inches)</label><input type="number" step="0.0625" inputmode="decimal" id="mInput" placeholder="e.g. 1.482" autofocus><div class="modal-btns"><button class="m-cancel" onclick="closeModal()">Cancel</button><button class="m-ok" onclick="addR()">Add</button></div></div></div>`;
+  setTimeout(()=>{const i=document.getElementById('mInput');if(i)i.focus();},60);
+}
+
+function closeModal(){document.getElementById('modalArea').innerHTML='';activeModal=null;}
+
+function addR(){
+  if(!activeModal)return;
+  const v=parseFloat(document.getElementById('mInput').value);
+  if(isNaN(v))return;
+  const key=activeModal.key;
+  if(!S[key])S[key]={spec:'',readings:[]};
+  S[key].readings.push(v);
+  refreshMeas(key);
+  closeModal();
+}
+
+function refreshSquare(){
+  const spec=parseFloat(document.getElementById('square_spec').value)||'';
+  if(!S.square_data)S.square_data={spec:'',readings:[]};
+  S.square_data.spec=spec;
+  refreshSquareDisplay();
+}
+
+function refreshSquareDisplay(){
+  const d=S.square_data||{spec:'',readings:[]};
+  const n=d.readings.length;
+  const avgEl=document.getElementById('square_avg');
+  const drowEl=document.getElementById('square_delta');
+  const badgeEl=document.getElementById('square_badge');
+  const pillsEl=document.getElementById('square_pills');
+  pillsEl.innerHTML=d.readings.map((r,i)=>`<span class="r-pill" onclick="removeSquare(${i})">${r.toFixed(3)}"</span>`).join('')+`<button class="add-btn" onclick="openSquareModal()">+ Add reading</button>`;
+  if(n===0){avgEl.textContent='—';drowEl.classList.add('hidden');return;}
+  const avg=d.readings.reduce((a,b)=>a+b,0)/n;
+  avgEl.textContent=avg.toFixed(3)+'"';
+  if(d.spec!==''){
+    const delta=avg-d.spec;const abs=Math.abs(delta);
+    const cls=abs<=0.0625?'ok':abs<=0.25?'warn':'bad';
+    badgeEl.innerHTML=`<span class="badge ${cls}">${delta>0?'+':''}${delta.toFixed(4)}"</span>`;
+    drowEl.classList.remove('hidden');
+  } else drowEl.classList.add('hidden');
+}
+
+function openSquareModal(){
+  document.getElementById('modalArea').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal"><h3>Add reading — Square</h3><label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:5px">Diagonal measurement (inches)</label><input type="number" step="0.0625" inputmode="decimal" id="mInput" autofocus><div class="modal-btns"><button class="m-cancel" onclick="closeModal()">Cancel</button><button class="m-ok" onclick="addSquareR()">Add</button></div></div></div>`;
+  setTimeout(()=>{const i=document.getElementById('mInput');if(i)i.focus();},60);
+}
+
+function addSquareR(){
+  const v=parseFloat(document.getElementById('mInput').value);if(isNaN(v))return;
+  if(!S.square_data)S.square_data={spec:'',readings:[]};
+  S.square_data.readings.push(v);refreshSquareDisplay();closeModal();
+}
+
+function removeSquare(idx){S.square_data.readings.splice(idx,1);refreshSquareDisplay();}
+
+function toggleSkid(){
+  const isSkid=S.rg_pallettype==='Skid';
+  document.getElementById('bottomDeckCard').classList.toggle('hidden',isSkid);
+}
+
+function toggleBlocks(){
+  document.getElementById('blocksCard').classList.toggle('hidden',S.rg_block!=='Yes');
+}
+
+function toggleNotch(){
+  document.getElementById('notchSection').classList.toggle('hidden',S.rg_notched!=='Yes');
+}
+
+function toggleBrandSection(){
+  document.getElementById('brandSection').classList.toggle('hidden',S.rg_otherbrand!=='Yes');
+}
+
+function togglePaint(){
+  document.getElementById('paintSection').classList.toggle('hidden',S.rg_painted!=='Yes');
+}
+
+function nextFromGeneral(){
+  role=S.rg_role||'';productType=S.rg_type||'';
+  const name=document.getElementById('g_name').value.trim();
+  const date=document.getElementById('g_date').value;
+  const loc=document.getElementById('g_loc').value;
+  if(!name||!date||!loc||!role||!productType){showErr('Please complete all fields.');return;}
+  document.getElementById('pageGeneral').classList.add('hidden');
+  if(productType==='Lumber'){
+    document.getElementById('pageLumber').classList.remove('hidden');
+    document.getElementById('lumberSub').textContent=name+' · '+loc;
+    buildMeas('measLumber',['Thickness','Width','Length'],'lum');
+    document.getElementById('prog').style.width='50%';
+  } else {
+    document.getElementById('pagePallet').classList.remove('hidden');
+    document.getElementById('palletSub').textContent=name+' · '+loc;
+    buildMeas('measStringers',['Height','Thickness','Length'],'str');
+    buildMeas('measNotch',['Depth','Length','Location (dist. from end)'],'notch');
+    buildMeas('measTopLead',['Thickness','Width','Length'],'tdl');
+    buildMeas('measTopInt',['Thickness','Width','Length'],'tdi');
+    buildMeas('measBotLead',['Thickness','Width','Length'],'bdl');
+    buildMeas('measBotInt',['Thickness','Width','Length'],'bdi');
+    buildMeas('measBlocks',['Thickness','Width','Length'],'blk');
+    ['stars_stringer_app','stars_topdeck_app','stars_botdeck_app','stars_countersink','stars_brandplacement','stars_wane'].forEach(makeStar);
+    if(!S.square_data)S.square_data={spec:'',readings:[]};
+    if(role==='Shipping') document.getElementById('shippingFields').classList.remove('hidden');
+    document.getElementById('prog').style.width='50%';
+  }
+}
+
+function goBack(){
+  document.getElementById('pagePallet').classList.add('hidden');
+  document.getElementById('pageLumber').classList.add('hidden');
+  document.getElementById('pageGeneral').classList.remove('hidden');
+  document.getElementById('prog').style.width='0%';
+}
+
+function showErr(msg){const s=document.getElementById('statusBar')||document.getElementById('statusBar2');if(s){s.textContent=msg;s.className='status err';}}
+
+function getAvg(key){
+  if(!S[key])return'';
+  const r=S[key].readings;
+  if(!r.length)return'';
+  return(r.reduce((a,b)=>a+b,0)/r.length).toFixed(4);
+}
+function getDelta(key){
+  if(!S[key])return'';
+  const r=S[key].readings;const sp=S[key].spec;
+  if(!r.length||sp==='')return'';
+  return((r.reduce((a,b)=>a+b,0)/r.length)-sp).toFixed(4);
+}
+
+async function submitAudit(){
+  const name=document.getElementById('g_name').value.trim();
+  const date=document.getElementById('g_date').value;
+  const loc=document.getElementById('g_loc').value;
+  let row={Timestamp:new Date().toLocaleString(),Date:date,Auditor:name,Role:role,Location:loc,ProductType:productType};
+
+  if(productType==='Lumber'){
+    row.PackSize=document.getElementById('l_packsize').value;
+    row.Grade=document.getElementById('l_grade').value;
+    ['Thickness','Width','Length'].forEach((d,i)=>{
+      const k=['lum_'+d];row['Lumber '+d+' Spec']=S['lum_'+d]?.spec||'';row['Lumber '+d+' Avg']=getAvg('lum_'+d);row['Lumber '+d+' Delta']=getDelta('lum_'+d);
+    });
+    row.SawdustLevel=S.rg_l_sawdust||'';row.MoldLevel=S.rg_l_mold||'';
+    row.Notes=document.getElementById('l_notes').value;
+  } else {
+    row.Customer=document.getElementById('p_customer').value;
+    row.SKU=document.getElementById('p_sku').value;
+    row.PalletOrSkid=S.rg_pallettype||'';row.BlockPallet=S.rg_block||'';
+    ['Height','Thickness','Length'].forEach(d=>{row['Stringer '+d+' Spec']=S['str_'+d]?.spec||'';row['Stringer '+d+' Avg']=getAvg('str_'+d);row['Stringer '+d+' Delta']=getDelta('str_'+d);});
+    row.StringerAppearance=S.stars_stringer_app||'';row.Notched=S.rg_notched||'';
+    if(S.rg_notched==='Yes'){['Depth','Length','Location (dist. from end)'].forEach(d=>{row['Notch '+d+' Spec']=S['notch_'+d]?.spec||'';row['Notch '+d+' Avg']=getAvg('notch_'+d);row['Notch '+d+' Delta']=getDelta('notch_'+d);});}
+    ['Thickness','Width','Length'].forEach(d=>{row['TopDeck Lead '+d+' Spec']=S['tdl_'+d]?.spec||'';row['TopDeck Lead '+d+' Avg']=getAvg('tdl_'+d);row['TopDeck Lead '+d+' Delta']=getDelta('tdl_'+d);});
+    ['Thickness','Width','Length'].forEach(d=>{row['TopDeck Int '+d+' Spec']=S['tdi_'+d]?.spec||'';row['TopDeck Int '+d+' Avg']=getAvg('tdi_'+d);row['TopDeck Int '+d+' Delta']=getDelta('tdi_'+d);});
+    row.TopDeckAppearance=S.stars_topdeck_app||'';
+    if(S.rg_pallettype!=='Skid'){
+      ['Thickness','Width','Length'].forEach(d=>{row['BotDeck Lead '+d+' Spec']=S['bdl_'+d]?.spec||'';row['BotDeck Lead '+d+' Avg']=getAvg('bdl_'+d);row['BotDeck Lead '+d+' Delta']=getDelta('bdl_'+d);});
+      ['Thickness','Width','Length'].forEach(d=>{row['BotDeck Int '+d+' Spec']=S['bdi_'+d]?.spec||'';row['BotDeck Int '+d+' Avg']=getAvg('bdi_'+d);row['BotDeck Int '+d+' Delta']=getDelta('bdi_'+d);});
+      row.BotDeckAppearance=S.stars_botdeck_app||'';
+      row.DeckboardSequence=document.getElementById('p_sequence')?.value||'';
+    }
+    if(S.rg_block==='Yes'){['Thickness','Width','Length'].forEach(d=>{row['Block '+d+' Spec']=S['blk_'+d]?.spec||'';row['Block '+d+' Avg']=getAvg('blk_'+d);row['Block '+d+' Delta']=getDelta('blk_'+d);});}
+    const sqd=S.square_data||{};const sqr=sqd.readings||[];
+    row.SquareSpec=sqd.spec||'';row.SquareAvg=sqr.length?(sqr.reduce((a,b)=>a+b,0)/sqr.length).toFixed(4):'';
+    row.SquareDelta=sqr.length&&sqd.spec!==''?((sqr.reduce((a,b)=>a+b,0)/sqr.length)-sqd.spec).toFixed(4):'';
+    row.IsHT=S.rg_ht||'';row.BrandsLegible=S.rg_brands||'';row.Bark=S.rg_bark||'';row.Countersink=S.stars_countersink||'';
+    row.OtherBrand=S.rg_otherbrand||'';row.BrandOk=S.rg_brandok||'';row.BrandPlacement=S.stars_brandplacement||'';
+    row.Painted=S.rg_painted||'';row.PaintDetail=document.getElementById('p_paint')?.value||'';
+    row.CorrectStackHeight=S.rg_stack||'';row.WaneRating=S.stars_wane||'';
+    row.FoodGrade=S.rg_foodgrade||'';row.SawdustFree=S.rg_sawdust||'';row.Contamination=S.rg_contam||'';
+    if(role==='Shipping'){row.KD=S.rg_kd||'';row.MoistureLevel=document.getElementById('p_moisture')?.value||'';}
+    row.Banding=S.rg_banding||'';row.Notes=document.getElementById('p_notes').value;
+  }
+
+  try{
+    const headers=Object.keys(row);
+    const csv=[headers.join(','),headers.map(h=>'"'+String(row[h]||'').replace(/"/g,'""')+'"').join(',')].join('\n');
+    const blob=new Blob([csv],{type:'text/csv'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;
+    a.download='QC_'+productType+'_'+date+'_'+name.replace(/\s/g,'')+'.csv';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    const sb=document.getElementById(productType==='Lumber'?'statusBar2':'statusBar');
+    sb.textContent='Audit saved! Import into your SharePoint Excel workbook.';sb.className='status ok';
+    document.getElementById('prog').style.width='100%';
+  } catch(e){showErr('Save failed. Please try again.');}
+}
+</script>
