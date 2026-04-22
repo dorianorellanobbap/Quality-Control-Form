@@ -373,11 +373,10 @@ function addR(){
   closeModal();
 }
 
-function refreshSquare(){
-  const strL=S['str_Length']?.spec;
-  const tdW=S['tdl_Width']?.spec||S['tdi_Width']?.spec;
-  if(strL&&tdW){
-    const calc=Math.sqrt(strL*strL+tdW*tdW);
+const strL=S['str_Length']?.spec;
+const tdL=S['tdl_Length']?.spec||S['tdi_Length']?.spec;
+if(strL&&tdL){
+  const calc=Math.sqrt(strL*strL+tdL*tdL);
     S.square_data.spec=calc;
     document.getElementById('square_spec_display').textContent=calc.toFixed(3)+'"';
   } else {
