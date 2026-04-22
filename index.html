@@ -152,9 +152,12 @@ textarea{resize:vertical;min-height:64px}
 <div class="card">
 <div class="card-title">Pallet overall</div>
 <div class="field">
-<label class="lbl">Pallet square — spec (in)</label>
-<div class="meas-row"><div><div class="meas-lbl">Spec (in)</div><input type="number" step="0.0625" inputmode="decimal" id="square_spec" placeholder="e.g. 48" onchange="refreshSquare()"></div><div><div class="meas-lbl">Avg measured</div><div class="avg-display" id="square_avg">—</div></div></div>
-<div class="readings-row" id="square_pills"><button class="add-btn" onclick="openModal('square','square','Square')">+ Add reading</button></div>
+<label class="lbl">Pallet square (diagonal)</label>
+<div class="meas-row">
+<div><div class="meas-lbl">Calculated spec</div><div class="avg-display" id="square_spec_display">Enter stringer & deck specs first</div></div>
+<div><div class="meas-lbl">Avg measured</div><div class="avg-display" id="square_avg">—</div></div>
+</div>
+<div class="readings-row" id="square_pills"><button class="add-btn" onclick="openSquareModal()">+ Add reading</button></div>
 <div id="square_delta" class="delta-row hidden"><span class="delta-lbl">Delta</span><span id="square_badge"></span></div>
 </div>
 <div class="field"><label class="lbl">Is the pallet HT? *</label>
@@ -326,7 +329,7 @@ function buildMeas(containerId,dims,prefix){
   });
 }
 
-function setSpec(key,val){S[key].spec=parseFloat(val)||'';refreshMeas(key);}
+function setSpec(key,val){S[key].spec=parseFloat(val)||'';refreshSquare();refreshMeas(key);}
 
 function refreshMeas(key){
   const d=S[key];if(!d)return;
@@ -371,9 +374,16 @@ function addR(){
 }
 
 function refreshSquare(){
-  const spec=parseFloat(document.getElementById('square_spec').value)||'';
-  if(!S.square_data)S.square_data={spec:'',readings:[]};
-  S.square_data.spec=spec;
+  const strL=S['str_Length']?.spec;
+  const tdW=S['tdl_Width']?.spec||S['tdi_Width']?.spec;
+  if(strL&&tdW){
+    const calc=Math.sqrt(strL*strL+tdW*tdW);
+    S.square_data.spec=calc;
+    document.getElementById('square_spec_display').textContent=calc.toFixed(3)+'"';
+  } else {
+    S.square_data.spec='';
+    document.getElementById('square_spec_display').textContent='Enter stringer & deck specs first';
+  }
   refreshSquareDisplay();
 }
 
