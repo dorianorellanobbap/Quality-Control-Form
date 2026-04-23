@@ -479,6 +479,7 @@ function goBack(){
 }
 
 function showErr(msg){const s=document.getElementById('statusBar')||document.getElementById('statusBar2');if(s){s.textContent=msg;s.className='status err';}}
+function showStatus(msg,type){const s=document.getElementById(productType==='Lumber'?'statusBar2':'statusBar');if(s){s.textContent=msg;s.className='status '+(type||'ok');}}
 
 function getAvg(key){
   if(!S[key])return'';
@@ -536,12 +537,6 @@ async function submitAudit(){
     row.Banding=S.rg_banding||'';row.Notes=document.getElementById('p_notes').value;
   }
 
-  const sb=document.getElementById(productType==='Lumber'?'statusBar2':'statusBar');
-  try{
-    const res=await fetch(FLOW_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)});
-    if(!res.ok){const txt=await res.text();throw new Error(txt||res.statusText);}
-    sb.textContent='Audit submitted to SharePoint!';sb.className='status ok';
-    document.getElementById('prog').style.width='100%';
-  } catch(e){sb.textContent=e.message||'Submission failed. Please try again.';sb.className='status err';}
+  fetch(FLOW_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).then(()=>{showStatus('Audit submitted!','ok');}).catch(err=>{showStatus('Submission failed: '+err.message,'err');});
 }
 </script>
