@@ -542,6 +542,6 @@ async function submitAudit(){
   const headers=Object.keys(row);
   const csv=[headers.join(','),headers.map(h=>'"'+String(row[h]||'').replace(/"/g,'""')+'"').join(',')].join('\n');
 
-  emailjs.send('service_a68hwso','template_vtr3ogy',{auditor:name,audit_type:productType,customer:document.getElementById('p_customer')?.value||'N/A',date:date,location:loc,name:name,email:'orders@bblumber.com',csv_data:csv}).then(()=>{showStatus('Audit submitted successfully!','ok');}).catch(err=>{showStatus('Submission failed: '+JSON.stringify(err),'err');});
+  emailjs.send('service_a68hwso','template_vtr3ogy',{auditor:name,audit_type:productType,customer:document.getElementById('p_customer')?.value||'N/A',date:date,location:loc,name:name,email:'dorian.orellano.bbap@gmail.com',csv_data:csv}).then(()=>{showStatus('Audit submitted successfully!','ok');}).catch(err=>{showStatus('Submission failed: '+JSON.stringify(err),'err');});
 }
 </script>
