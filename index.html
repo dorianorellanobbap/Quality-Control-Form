@@ -537,6 +537,6 @@ async function submitAudit(){
     row.Banding=S.rg_banding||'';row.Notes=document.getElementById('p_notes').value;
   }
 
-  fetch(FLOW_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).then(()=>{showStatus('Audit submitted!','ok');}).catch(err=>{showStatus('Submission failed: '+err.message,'err');});
+  fetch(FLOW_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).then(()=>{showStatus('Audit submitted!','ok');}).catch(err=>{showStatus('Submission failed: '+err.message,'err');});
 }
 </script>
