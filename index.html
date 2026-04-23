@@ -1,5 +1,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>emailjs.init('aPKA9rwW3mmwo_hBL');</script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -291,7 +293,7 @@ textarea{resize:vertical;min-height:64px}
 </div>
 
 <script>
-const FLOW_URL='https://default42a50820a72440e593fe3a6c4eb384.5c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/417e2b98d5d3439b850c273c1a13f5e1/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HtthER9e6WDJ9QlQXsMsh0JEwHxyYBGF92mvygGlS90';
+
 const S={};
 let role='',productType='',activeModal=null;
 
@@ -537,6 +539,9 @@ async function submitAudit(){
     row.Banding=S.rg_banding||'';row.Notes=document.getElementById('p_notes').value;
   }
 
-  fetch(FLOW_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).then(()=>{showStatus('Audit submitted!','ok');}).catch(err=>{showStatus('Submission failed: '+err.message,'err');});
+  const headers=Object.keys(row);
+  const csv=[headers.join(','),headers.map(h=>'"'+String(row[h]||'').replace(/"/g,'""')+'"').join(',')].join('\n');
+
+  emailjs.send('service_a68hwso','template_vtr3ogy',{auditor:name,audit_type:productType,customer:document.getElementById('p_customer')?.value||'N/A',date:date,location:loc,name:name,email:'orders@bblumber.com',csv_data:csv}).then(()=>{showStatus('Audit submitted successfully!','ok');}).catch(err=>{showStatus('Submission failed: '+JSON.stringify(err),'err');});
 }
 </script>
